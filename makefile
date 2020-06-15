@@ -44,7 +44,7 @@ CFLAGS += -Wno-unused-function
 CFLAGS += -I $(INCDIR)
 
 # Executable.
-EXEC = mips-decoder
+EXEC = mips32-simulator
 
 # Source files.
 SRC = $(wildcard $(SRCDIR)/*.c)
