@@ -25,6 +25,7 @@
 #include <mips32/inst.h>
 #include <mips32/utils.h>
 #include <mips32/regs.h>
+#include <mips32/mem.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,6 +35,7 @@
 /* Forward definitions. */
 extern struct inst instructions[];
 extern struct reg registers[];
+extern struct mem memory[];
 
 /**
  * @brief Del imitating characters.
@@ -49,6 +51,9 @@ const char *delim = " ,()";
  * register is returned. Upon failure, a null pointer is returned
  * instead.
  */
+
+ 
+
 static const char *register_lookup(const char *regname)
 {
 	if (regname == NULL)
@@ -62,6 +67,45 @@ static const char *register_lookup(const char *regname)
 
 	return (NULL);
 }
+
+static const char *register_lookup_name(const char *code)
+{
+	if (code == NULL)
+		return (NULL);
+
+	for (int i = 0; i < REG_NUM; i++)
+	{
+		if (!strcmp(registers[i].code, code))
+			return (registers[i].name);
+	}
+
+	return (NULL);
+}
+
+static int register_lookup_number(const char *code)
+{
+	if (code == NULL)
+		return (0);
+
+	for (int i = 0; i < REG_NUM; i++)
+	{
+		if (!strcmp(registers[i].code, code))
+			return (i);
+	}
+
+	return (0);
+}
+
+static int strbin_to_dec(const char * str) {
+    unsigned int result = 0;
+    for (int i = strlen(str) - 1, j = 0; i >= 0; i--, j++) {
+        char k = str[i] - '0'; // we assume ASCII coding
+        k <<= j;
+        result += k;
+    }
+    return result;
+}
+
 
 /**
  * @brief Lookups the operation code of an instruction.
@@ -126,7 +170,8 @@ static void encode_r_instruction(FILE *output, const char *inst)
 	const char *rs;
 	const char *rt;
 	const char *opcode;
-	const char *funct;
+	const char *funct;  
+  
 
 	check((rd = register_lookup(strtok(NULL, delim))) != NULL);
 	check((rs = register_lookup(strtok(NULL, delim))) != NULL);
@@ -142,6 +187,41 @@ static void encode_r_instruction(FILE *output, const char *inst)
 		"00000",
 		funct
 	);
+
+  //Register 
+  char teste[500] = "";
+  strcat(teste,opcode);
+  strcat(teste,rs);
+  strcat(teste,rt);
+  strcat(teste,rd);
+  strcat(teste,"00000");
+  strcat(teste,funct);
+
+ 
+
+  char* binaryString = teste;
+
+  // convert binary string to integer
+  int value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  char hexString[12]; // long enough for any 32-bit value, 4-byte aligned
+
+  sprintf(hexString, "%x",value);
+  char newHex[12] = "";
+  if (strlen(hexString) == 7){
+      sprintf(newHex, "%s%s", "0x0",hexString);
+  }else{
+      sprintf(newHex, "%s%s", "0x",hexString);
+  }
+  
+   
+  registers[register_lookup_number(rs)].value = newHex;
+  //end  
+
+
+
+    
 }
 
 /**
@@ -192,6 +272,28 @@ static void encode_mult(FILE *output, const char *inst)
 		"00000",
 		funct
 	);
+
+  //Register 
+  char teste[500] = "";
+  strcat(teste,opcode);
+  strcat(teste,rs);
+  strcat(teste,rt);
+  strcat(teste,"00000");
+  strcat(teste,"00000");
+  strcat(teste,funct);
+
+  char* binaryString = teste;
+
+  // convert binary string to integer
+  int value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  char hexString[12]; // long enough for any 32-bit value, 4-byte aligned
+  sprintf(hexString, "%s%x", "0x0",value);
+  
+   
+  registers[register_lookup_number(rs)].value = hexString;
+  //end  
 }
 
 /**
@@ -220,6 +322,28 @@ static void encode_div(FILE *output, const char *inst)
 		"00000",
 		funct
 	);
+
+  //Register 
+  char teste[500] = "";
+  strcat(teste,opcode);
+  strcat(teste,rs);
+  strcat(teste,rt);
+  strcat(teste,"00000");
+  strcat(teste,"00000");
+  strcat(teste,funct);
+
+  char* binaryString = teste;
+
+  // convert binary string to integer
+  int value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  char hexString[12]; // long enough for any 32-bit value, 4-byte aligned
+  sprintf(hexString, "%s%x", "0x0",value);
+  
+   
+  registers[register_lookup_number(rs)].value = hexString;
+  //end  
 }
 
 /**
@@ -367,6 +491,36 @@ static void encode_jr(FILE *output, const char *inst)
 		"00000",
 		funct
 	);
+
+  //Register 
+  char teste[500] = "";
+  strcat(teste,opcode);
+  strcat(teste,rs);
+  strcat(teste,"00000");
+  strcat(teste,"00000");
+  strcat(teste,"00000");
+  strcat(teste,funct);
+
+  char* binaryString = teste;
+
+  // convert binary string to integer
+  int value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  char hexString[12]; // long enough for any 32-bit value, 4-byte aligned
+
+  sprintf(hexString, "%x",value);
+  char newHex[12] = "";
+  if (strlen(hexString) == 7){
+      sprintf(newHex, "%s%s", "0x0",hexString);
+  }else{
+      sprintf(newHex, "%s%s", "0x",hexString);
+  }
+  
+   
+  registers[register_lookup_number(rs)].value = newHex;
+  //end  
+
 }
 
 /*============================================================================*
@@ -400,6 +554,33 @@ static void encode_i_instruction(FILE *output, const char *inst)
 		rt,
 		&branch2[16]
 	);
+
+  //Register 
+  char teste[500] = "";
+  strcat(teste,opcode);
+  strcat(teste,rs);
+  strcat(teste,rt);
+  strcat(teste,&branch2[16]);
+
+  char* binaryString = teste;
+
+  // convert binary string to integer
+  int value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  char hexString[12]; // long enough for any 32-bit value, 4-byte aligned
+
+  sprintf(hexString, "%x",value);
+  char newHex[12] = "";
+  if (strlen(hexString) == 7){
+      sprintf(newHex, "%s%s", "0x0",hexString);
+  }else{
+      sprintf(newHex, "%s%s", "0x",hexString);
+  }
+  
+   
+  registers[register_lookup_number(rs)].value = newHex;
+  //end  
 }
 
 /**
@@ -495,6 +676,44 @@ static void encode_lw(FILE *output, const char *inst)
 		rt,
 		&branch2[16]
 	);
+
+  char *bin_str = &branch2[16];
+    unsigned result = 0;
+    while (*bin_str)
+    {
+        result *= 2;
+        result += *bin_str == '1' ? 1 : 0;
+        ++bin_str;
+    }
+    printf("%d\n", result);
+
+
+  //Register 
+  char teste[500] = "";
+  strcat(teste,opcode);
+  strcat(teste,rs);
+  strcat(teste,rt);
+  strcat(teste,&branch2[16]);
+
+  char* binaryString = teste;
+
+  // convert binary string to integer
+  int value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  char hexString[12]; // long enough for any 32-bit value, 4-byte aligned
+
+  sprintf(hexString, "%x",value);
+  char newHex[12] = "";
+  if (strlen(hexString) == 7){
+      sprintf(newHex, "%s%s", "0x0",hexString);
+  }else{
+      sprintf(newHex, "%s%s", "0x",hexString);
+  }
+  
+   
+  registers[register_lookup_number(rs)].value = newHex;
+  //end  
 }
 
 /**
@@ -524,6 +743,33 @@ static void encode_sw(FILE *output, const char *inst)
 		rt,
 		&branch2[16]
 	);
+
+  //Register 
+  char teste[500] = "";
+  strcat(teste,opcode);
+  strcat(teste,rs);
+  strcat(teste,rt);
+  strcat(teste,&branch2[16]);
+
+  char* binaryString = teste;
+
+  // convert binary string to integer
+  int value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  char hexString[12]; // long enough for any 32-bit value, 4-byte aligned
+
+  sprintf(hexString, "%x",value);
+  char newHex[12] = "";
+  if (strlen(hexString) == 7){
+      sprintf(newHex, "%s%s", "0x0",hexString);
+  }else{
+      sprintf(newHex, "%s%s", "0x",hexString);
+  }
+  
+   
+  registers[register_lookup_number(rs)].value = newHex;
+  //end  
 }
 
 /*============================================================================*
@@ -551,6 +797,8 @@ static void encode_j_instruction(FILE *output, const char *inst)
 		opcode,
 		&addr2[7]
 	);
+
+  
 }
 
 /**
@@ -583,38 +831,38 @@ static void encode_jal(FILE *output, const char *inst)
  * @brief Lookup table of registers.
  */
 struct reg registers[REG_NUM] = {
-	{ REG_ZERO_NUM_STR, REG_ZERO_NAME },
-	{ REG_AT_NUM_STR,   REG_AT_NAME   },
-	{ REG_V0_NUM_STR,   REG_V0_NAME   },
-	{ REG_V1_NUM_STR,   REG_V1_NAME   },
-	{ REG_A0_NUM_STR,   REG_A0_NAME   },
-	{ REG_A1_NUM_STR,   REG_A1_NAME   },
-	{ REG_A2_NUM_STR,   REG_A2_NAME   },
-	{ REG_A3_NUM_STR,   REG_A3_NAME   },
-	{ REG_T0_NUM_STR,   REG_T0_NAME   },
-	{ REG_T1_NUM_STR,   REG_T1_NAME   },
-	{ REG_T2_NUM_STR,   REG_T2_NAME   },
-	{ REG_T3_NUM_STR,   REG_T3_NAME   },
-	{ REG_T4_NUM_STR,   REG_T4_NAME   },
-	{ REG_T5_NUM_STR,   REG_T5_NAME   },
-	{ REG_T6_NUM_STR,   REG_T6_NAME   },
-	{ REG_T7_NUM_STR,   REG_T7_NAME   },
-	{ REG_S0_NUM_STR,   REG_S0_NAME   },
-	{ REG_S1_NUM_STR,   REG_S1_NAME   },
-	{ REG_S2_NUM_STR,   REG_S2_NAME   },
-	{ REG_S3_NUM_STR,   REG_S3_NAME   },
-	{ REG_S4_NUM_STR,   REG_S4_NAME   },
-	{ REG_S5_NUM_STR,   REG_S5_NAME   },
-	{ REG_S6_NUM_STR,   REG_S6_NAME   },
-	{ REG_S7_NUM_STR,   REG_S7_NAME   },
-	{ REG_T8_NUM_STR,   REG_T8_NAME   },
-	{ REG_T9_NUM_STR,   REG_T9_NAME   },
-	{ REG_K0_NUM_STR,   REG_K0_NAME   },
-	{ REG_K1_NUM_STR,   REG_K1_NAME   },
-	{ REG_GP_NUM_STR,   REG_GP_NAME   },
-	{ REG_SP_NUM_STR,   REG_SP_NAME   },
-	{ REG_FP_NUM_STR,   REG_FP_NAME   },
-	{ REG_RA_NUM_STR,   REG_RA_NAME   },
+	{ REG_ZERO_NUM_STR, REG_ZERO_NAME, REG_ZERO_VALUE },
+	{ REG_AT_NUM_STR,   REG_AT_NAME, REG_AT_VALUE     },
+	{ REG_V0_NUM_STR,   REG_V0_NAME, REG_V0_VALUE     },
+	{ REG_V1_NUM_STR,   REG_V1_NAME, REG_V1_VALUE     },
+	{ REG_A0_NUM_STR,   REG_A0_NAME, REG_A0_VALUE     },
+	{ REG_A1_NUM_STR,   REG_A1_NAME, REG_A1_VALUE     },
+	{ REG_A2_NUM_STR,   REG_A2_NAME, REG_A2_VALUE     },
+	{ REG_A3_NUM_STR,   REG_A3_NAME, REG_A3_VALUE     },
+	{ REG_T0_NUM_STR,   REG_T0_NAME, REG_T0_VALUE     },
+	{ REG_T1_NUM_STR,   REG_T1_NAME, REG_T1_VALUE     },
+	{ REG_T2_NUM_STR,   REG_T2_NAME, REG_T2_VALUE     },
+	{ REG_T3_NUM_STR,   REG_T3_NAME, REG_T3_VALUE     },
+	{ REG_T4_NUM_STR,   REG_T4_NAME, REG_T4_VALUE     },
+	{ REG_T5_NUM_STR,   REG_T5_NAME, REG_T5_VALUE     },
+	{ REG_T6_NUM_STR,   REG_T6_NAME, REG_T6_VALUE     },
+	{ REG_T7_NUM_STR,   REG_T7_NAME, REG_T7_VALUE     },
+	{ REG_S0_NUM_STR,   REG_S0_NAME, REG_S0_VALUE     },
+	{ REG_S1_NUM_STR,   REG_S1_NAME, REG_S1_VALUE     },
+	{ REG_S2_NUM_STR,   REG_S2_NAME, REG_S2_VALUE     },
+	{ REG_S3_NUM_STR,   REG_S3_NAME, REG_S3_VALUE     },
+	{ REG_S4_NUM_STR,   REG_S4_NAME, REG_S4_VALUE     },
+	{ REG_S5_NUM_STR,   REG_S5_NAME, REG_S5_VALUE     },
+	{ REG_S6_NUM_STR,   REG_S6_NAME, REG_S6_VALUE     },
+	{ REG_S7_NUM_STR,   REG_S7_NAME, REG_S7_VALUE     },
+	{ REG_T8_NUM_STR,   REG_T8_NAME, REG_T8_VALUE     },
+	{ REG_T9_NUM_STR,   REG_T9_NAME, REG_T9_VALUE     },
+	{ REG_K0_NUM_STR,   REG_K0_NAME, REG_K0_VALUE     },
+	{ REG_K1_NUM_STR,   REG_K1_NAME, REG_K1_VALUE     },
+	{ REG_GP_NUM_STR,   REG_GP_NAME, REG_GP_VALUE     },
+	{ REG_SP_NUM_STR,   REG_SP_NAME, REG_SP_VALUE     },
+	{ REG_FP_NUM_STR,   REG_FP_NAME, REG_FP_VALUE     },
+	{ REG_RA_NUM_STR,   REG_RA_NAME, REG_RA_VALUE     },
 };
 
 /**
@@ -644,6 +892,41 @@ struct inst instructions[] = {
 	{ INST_NAME_JR,   INST_JR_OPCODE_STR,   INST_JR_FUNCT_STR,  encode_jr    },
 	{ INST_NAME_JAL,  INST_JAL_OPCODE_STR,  "",                 encode_jal   },
 	{ NULL,           NULL,                NULL,                NULL         },
+};
+
+struct mem memory[MEM_NUM] = {
+  {MEM_1},
+  {MEM_2},
+  {MEM_3},
+  {MEM_4},
+  {MEM_5},
+  {MEM_6},
+  {MEM_7},
+  {MEM_8},
+  {MEM_9},
+  {MEM_10},
+  {MEM_11},
+  {MEM_12},
+  {MEM_13},
+  {MEM_14},
+  {MEM_15},
+  {MEM_16},
+  {MEM_18},
+  {MEM_19},
+  {MEM_20},
+  {MEM_21},
+  {MEM_22},
+  {MEM_23},
+  {MEM_24},
+  {MEM_25},
+  {MEM_26},
+  {MEM_27},
+  {MEM_28},
+  {MEM_29},
+  {MEM_30},
+  {MEM_31},
+  {MEM_32},
+
 };
 
 /**
@@ -685,12 +968,40 @@ void encode(FILE *output, FILE *input)
 			error("unknown command");
 	}
 
+  
+
+ 
+
 	/* House keeping. */
 	free(line);
 }
 
-void encode(FILE *output, FILE *input)
+
+void calc_registers(FILE *output)
 {
-  for (i=0;)
+  
+ //debug
+  for (int j = 0;j < 32; j++)
+  {
+    fprintf(output,"%s %s\n",		
+		registers[j].name,
+    registers[j].value
+  	);
+  }
+
+}
+
+
+
+void calc_memory(FILE *output)
+{  
+ //debug
+  for (int j = 0; j < 31; j++)
+  {
+    fprintf(output,"%s %s\n",		
+		memory[j].name,
+    "0x00000000"
+  	);
+  }
 
 }
