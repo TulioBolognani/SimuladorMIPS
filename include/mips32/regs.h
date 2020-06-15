@@ -106,6 +106,45 @@
 	#define REG_RA_NUM_STR    "11111"
 	/**@}**/
 
+  /**
+	 * @name Value of Registers (as string)
+	 */
+	/**@{*/
+	#define REG_ZERO_VALUE  "0x00000000"
+	#define REG_AT_VALUE    "0x00000000"
+	#define REG_V0_VALUE    "0x00000000"
+	#define REG_V1_VALUE    "0x00000000"
+	#define REG_A0_VALUE    "0x00000000"
+	#define REG_A1_VALUE    "0x00000000"
+	#define REG_A2_VALUE    "0x00000000"
+	#define REG_A3_VALUE    "0x00000000"
+	#define REG_T0_VALUE    "0x00000000"
+	#define REG_T1_VALUE    "0x00000000"
+	#define REG_T2_VALUE    "0x00000000"
+	#define REG_T3_VALUE    "0x00000000"
+	#define REG_T4_VALUE    "0x00000000"
+	#define REG_T5_VALUE    "0x00000000"
+	#define REG_T6_VALUE    "0x00000000"
+	#define REG_T7_VALUE    "0x00000000"
+	#define REG_S0_VALUE    "0x00000000"
+	#define REG_S1_VALUE    "0x00000000"
+	#define REG_S2_VALUE    "0x00000000"
+	#define REG_S3_VALUE    "0x00000000"
+	#define REG_S4_VALUE    "0x00000000"
+	#define REG_S5_VALUE    "0x00000000"
+	#define REG_S6_VALUE    "0x00000000"
+	#define REG_S7_VALUE    "0x00000000"
+	#define REG_T8_VALUE    "0x00000000"
+	#define REG_T9_VALUE    "0x00000000"
+	#define REG_K0_VALUE    "0x00000000"
+	#define REG_K1_VALUE    "0x00000000"
+	#define REG_GP_VALUE    "0x00000000"
+	#define REG_SP_VALUE    "0x00000000"
+	#define REG_FP_VALUE    "0x00000000"
+	#define REG_RA_VALUE    "0x00000000"
+	/**@}**/
+
+
 	/**
 	 * @brief Register information.
 	 */
@@ -113,6 +152,8 @@
 	{
 		const char *code;  /**< Register Code */
 		const char *name;  /**< Register Name */
+    const char *value;  /**< Register Value */
+   
 	};
 
 #endif /* MIPS32_REGS_H_ */

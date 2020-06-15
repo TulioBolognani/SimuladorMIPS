@@ -158,4 +158,6 @@
 		void (*encode)(FILE *, const char *); /**< Encoding Function.        */
 	};
 
+  
+
 #endif /* MIPS32_INST_H_ */
