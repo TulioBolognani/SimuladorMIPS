@@ -96,16 +96,6 @@ static int register_lookup_number(const char *code)
 	return (0);
 }
 
-static int strbin_to_dec(const char * str) {
-    unsigned int result = 0;
-    for (int i = strlen(str) - 1, j = 0; i >= 0; i--, j++) {
-        char k = str[i] - '0'; // we assume ASCII coding
-        k <<= j;
-        result += k;
-    }
-    return result;
-}
-
 
 /**
  * @brief Lookups the operation code of an instruction.
@@ -581,6 +571,39 @@ static void encode_i_instruction(FILE *output, const char *inst)
    
   registers[register_lookup_number(rs)].value = newHex;
   //end  
+
+  //Memory 
+  char* mem = teste; 
+  
+
+  binaryString = mem;
+
+  // convert binary string to integer
+  value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  
+  sprintf(hexString, "%x",value);
+  
+  
+   char *bin_str = &branch2[16];
+    unsigned result = 0;
+    while (*bin_str)
+    {
+        result *= 2;
+        result += *bin_str == '1' ? 1 : 0;
+        ++bin_str;
+    }
+    char newHexM[12] = "";
+    if (strlen(hexString) == 7){
+        sprintf(newHexM, "%s%s", "0x0",hexString);
+    }else{
+        sprintf(newHexM, "%s%s", "0x",hexString);
+    }
+    memory[result].value = newHexM;
+    
+  
+  //end  
 }
 
 /**
@@ -676,24 +699,16 @@ static void encode_lw(FILE *output, const char *inst)
 		rt,
 		&branch2[16]
 	);
-
-  char *bin_str = &branch2[16];
-    unsigned result = 0;
-    while (*bin_str)
-    {
-        result *= 2;
-        result += *bin_str == '1' ? 1 : 0;
-        ++bin_str;
-    }
-    printf("%d\n", result);
-
-
+    
+  
   //Register 
   char teste[500] = "";
   strcat(teste,opcode);
   strcat(teste,rs);
   strcat(teste,rt);
   strcat(teste,&branch2[16]);
+
+  
 
   char* binaryString = teste;
 
@@ -714,6 +729,40 @@ static void encode_lw(FILE *output, const char *inst)
    
   registers[register_lookup_number(rs)].value = newHex;
   //end  
+
+  //Memory 
+  char* mem = teste; 
+  
+
+  binaryString = mem;
+
+  // convert binary string to integer
+  value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  
+  sprintf(hexString, "%x",value);
+  
+  
+   char *bin_str = &branch2[16];
+    unsigned result = 0;
+    while (*bin_str)
+    {
+        result *= 2;
+        result += *bin_str == '1' ? 1 : 0;
+        ++bin_str;
+    }
+    char newHexM[12] = "";
+    if (strlen(hexString) == 7){
+        sprintf(newHexM, "%s%s", "0x0",hexString);
+    }else{
+        sprintf(newHexM, "%s%s", "0x",hexString);
+    }
+    memory[result].value = newHexM;
+    
+  
+  //end  
+
 }
 
 /**
@@ -770,6 +819,39 @@ static void encode_sw(FILE *output, const char *inst)
    
   registers[register_lookup_number(rs)].value = newHex;
   //end  
+
+  //Memory 
+  char* mem = teste; 
+  
+
+  binaryString = mem;
+
+  // convert binary string to integer
+  value = (int)strtol(binaryString, NULL, 2);
+
+  // convert integer to hex string
+  
+  sprintf(hexString, "%x",value);
+  
+  
+   char *bin_str = &branch2[16];
+    unsigned result = 0;
+    while (*bin_str)
+    {
+        result *= 2;
+        result += *bin_str == '1' ? 1 : 0;
+        ++bin_str;
+    }
+    char newHexM[12] = "";
+    if (strlen(hexString) == 7){
+        sprintf(newHexM, "%s%s", "0x0",hexString);
+    }else{
+        sprintf(newHexM, "%s%s", "0x",hexString);
+    }
+    memory[result].value = newHexM;
+    
+  
+  //end  
 }
 
 /*============================================================================*
@@ -798,6 +880,11 @@ static void encode_j_instruction(FILE *output, const char *inst)
 		&addr2[7]
 	);
 
+    
+    
+    
+  
+  //end  
   
 }
 
@@ -895,37 +982,38 @@ struct inst instructions[] = {
 };
 
 struct mem memory[MEM_NUM] = {
-  {MEM_1},
-  {MEM_2},
-  {MEM_3},
-  {MEM_4},
-  {MEM_5},
-  {MEM_6},
-  {MEM_7},
-  {MEM_8},
-  {MEM_9},
-  {MEM_10},
-  {MEM_11},
-  {MEM_12},
-  {MEM_13},
-  {MEM_14},
-  {MEM_15},
-  {MEM_16},
-  {MEM_18},
-  {MEM_19},
-  {MEM_20},
-  {MEM_21},
-  {MEM_22},
-  {MEM_23},
-  {MEM_24},
-  {MEM_25},
-  {MEM_26},
-  {MEM_27},
-  {MEM_28},
-  {MEM_29},
-  {MEM_30},
-  {MEM_31},
-  {MEM_32},
+  {MEM_1, MEM_1_VALUE},
+  {MEM_2, MEM_2_VALUE},
+  {MEM_3, MEM_3_VALUE},
+  {MEM_4, MEM_4_VALUE},
+  {MEM_5, MEM_5_VALUE},
+  {MEM_6, MEM_6_VALUE},
+  {MEM_7, MEM_7_VALUE},
+  {MEM_8, MEM_8_VALUE},
+  {MEM_9, MEM_9_VALUE},
+  {MEM_10, MEM_10_VALUE},
+  {MEM_11, MEM_11_VALUE},
+  {MEM_12, MEM_12_VALUE},
+  {MEM_13, MEM_13_VALUE},
+  {MEM_14, MEM_14_VALUE},
+  {MEM_15, MEM_15_VALUE},
+  {MEM_16, MEM_16_VALUE},
+  {MEM_17, MEM_17_VALUE},
+  {MEM_18, MEM_18_VALUE},
+  {MEM_19, MEM_19_VALUE},
+  {MEM_20, MEM_20_VALUE},
+  {MEM_21, MEM_21_VALUE},
+  {MEM_22, MEM_22_VALUE},
+  {MEM_23, MEM_23_VALUE},
+  {MEM_24, MEM_24_VALUE},
+  {MEM_25, MEM_25_VALUE},
+  {MEM_26, MEM_26_VALUE},
+  {MEM_27, MEM_27_VALUE},
+  {MEM_28, MEM_28_VALUE},
+  {MEM_29, MEM_29_VALUE},
+  {MEM_30, MEM_30_VALUE},
+  {MEM_31, MEM_31_VALUE},
+  {MEM_32, MEM_32_VALUE},
 
 };
 
@@ -1000,7 +1088,7 @@ void calc_memory(FILE *output)
   {
     fprintf(output,"%s %s\n",		
 		memory[j].name,
-    "0x00000000"
+    memory[j].value
   	);
   }
 
