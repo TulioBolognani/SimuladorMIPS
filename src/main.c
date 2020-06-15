@@ -28,6 +28,9 @@
 
 /* Import definitions. */
 extern void encode(FILE *output, FILE *input);
+extern void calc_registers(FILE *output);
+extern void calc_memory(FILE *output);
+
 
 /**
  * @brief Prints program usage and exits.
@@ -97,7 +100,8 @@ int main(int argc, const char *argv[])
 			goto error1;
 		}
 
-    encode(output, input);
+    calc_registers(output);
+    
 
     /* House keeping. */
     fclose(input);
@@ -118,7 +122,7 @@ int main(int argc, const char *argv[])
 			goto error1;
 		}
 
-    encode(output, input);
+    calc_memory(output);
 
     /* House keeping. */
     fclose(input);
